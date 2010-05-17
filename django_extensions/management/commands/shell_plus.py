@@ -1,6 +1,7 @@
 import os
 from django.core.management.base import NoArgsCommand
 from optparse import make_option
+from django_extensions.management.hackipy import my_runsource
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
@@ -58,9 +59,11 @@ class Command(NoArgsCommand):
                 # would use sys.argv from this script.
                 try:
                     from IPython.core.iplib import InteractiveShell
+                    InteractiveShell.runsource = my_runsource
                     shell = InteractiveShell(user_ns=imported_objects)
                 except ImportError:
                     import IPython
+                    IPython.iplib.InteractiveShell.runsource = my_runsource
                     shell = IPython.Shell.IPShell(argv=[], user_ns=imported_objects)
                 shell.mainloop()
         except ImportError:
